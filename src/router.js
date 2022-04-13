@@ -9,10 +9,14 @@ import Profile from './pages/Profile.vue';
 import MainNavbar from './layout/MainNavbar.vue';
 import MainNavbarNorte from './layout/MainNavbarNorte.vue';
 import MainFooter from './layout/MainFooter.vue';
+import IndexUserVue from './pages/Users/IndexUser.vue';
+import IndexCarpetas from '@/pages/Carpetas/IndexCarpetas.vue'
+import IndexArchivos from '@/pages/Archivos/IndexArchivos.vue'
 
 Vue.use(Router);
 
 export default new Router({
+    mode: 'history',
   linkExactActiveClass: 'active',
   routes: [
     {
@@ -36,7 +40,33 @@ export default new Router({
     {
       path: '/carpetas',
       name: 'carpetas',
-      components: { default: Folders, header: MainNavbarNorte, footer: MainFooter },
+      components: { default: IndexCarpetas, header: MainNavbarNorte, footer: MainFooter },
+      props: {
+        header: { colorOnScroll: 400 },
+        footer: { backgroundColor: 'black' }
+      }
+    },
+    {
+      path: '/carpeta/:nombre',
+      name: 'carpeta',
+      components: {
+        default: IndexArchivos,
+        header: MainNavbarNorte,
+        footer: MainFooter
+      },
+      props: {
+        header: { colorOnScroll: 400 },
+        footer: { backgroundColor: 'black' }
+      }
+    },
+    {
+      path: '/usuarios',
+      name: 'usuarios',
+      components: {
+        default: IndexUserVue,
+        header: MainNavbarNorte,
+        footer: MainFooter
+      },
       props: {
         header: { colorOnScroll: 400 },
         footer: { backgroundColor: 'black' }

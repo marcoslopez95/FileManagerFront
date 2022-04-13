@@ -2,7 +2,7 @@
     <table class="table table-hover">
         <thead>
             <tr>
-                <th scope="col" v-for="(header, i) in headers" :key="i">
+                <th v-for="(header, i) in headers" :key="i">
                     {{ header }}
                 </th>
             </tr>

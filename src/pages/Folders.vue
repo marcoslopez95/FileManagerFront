@@ -2,11 +2,22 @@
     <div class="pt-5">
         <div class="main mt-5">
             <div class="row p-5">
-                <Tabla :headers="['#', 'Nombre', 'Archivos', 'Opciones']">
+                <Tabla
+                    :headers="[
+                        '#',
+                        'Nombre',
+                        'Archivos',
+                        'Ultima Modificacion',
+                        'Propietario',
+                        'Opciones',
+                    ]"
+                >
                     <tr v-for="(folder, i) in folders" :key="i">
                         <td class="col-1">{{ i + 1 }}</td>
                         <td class="col">{{ folder.name }}</td>
-                        <td class="col-1">{{ folder.id }}</td>
+                        <td class="col">{{ folder.files.length }}</td>
+                        <td class="col-1">{{ folder.updated_at }}</td>
+                        <td class="col-1">{{ folder.created_id }}</td>
                         <td class="col-3">
                             <input type="checkbox" name="" id="" />
                         </td>
@@ -57,8 +68,7 @@ export default {
         };
     },
     mounted() {
-        let base = "http://127.0.0.1:8089";
-        let url = base + "/api/folders";
+        let url = "/api/folders";
         axios.get(url).then((response) => {
             console.log(response.data);
             let data = response.data;

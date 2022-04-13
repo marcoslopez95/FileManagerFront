@@ -1,6 +1,6 @@
 <template>
     <footer
-        class="footer fixed-bottom"
+        class="footer container-fluid"
         :class="{ [`footer-${type}`]: type }"
         :data-background-color="backgroundColor"
     >
