@@ -5,7 +5,9 @@
             v-if="checkedUser()"
             @logout="logout"
             :admin="admin"
+            :nombre="name"
         />
+        <notification></notification>
         <div class="wrapper">
             <router-view
                 @login="login"
@@ -13,9 +15,9 @@
                 @error="error"
             />
         </div>
+
         <router-view name="footer" />
         <!-- ------------------------ -->
-
         <modal :show.sync="error_b" headerClasses="justify-content-center">
             <h4 slot="header" class="title title-up">
                 <svg
@@ -41,15 +43,27 @@
 </template>
 <script>
 import { Modal } from "@/components";
+import Dayjs from "dayjs";
+import isSameOrBefore from "dayjs/plugin/isSameOrBefore";
+import { EventBus } from "@/event-bus";
+import Notification from "./components/Notification.vue";
 export default {
     components: {
         Modal,
+        Notification,
     },
     mounted() {
+        this.oirEvento();
         this.token = localStorage.getItem("token");
         this.admin = localStorage.getItem("admin");
-        console.log(this.$route.path);
-        console.log("app", this.token);
+        this.name = localStorage.getItem("name");
+        if (typeof this.admin == "string") {
+            this.admin = this.admin.search("ru") ? true : false;
+        }
+        //console.log(this.$route.path);
+        //console.log("app", this.token);
+        console.log("admin", this.admin);
+        console.log("admin", typeof this.admin);
         if (
             !this.token &&
             (this.$route.path != "/login" || this.$route.path != "/registro")
@@ -68,12 +82,21 @@ export default {
         return {
             user: "",
             token: "",
+            name: "",
             admin: false,
             error_m: "",
             error_b: false,
         };
     },
     methods: {
+        oirEvento() {
+            console.log("pa fuera");
+            EventBus.$on("logout", this.logout);
+        },
+        actualizarLista() {
+            console.log("refresca");
+            EventBus.$on("refresh", this.logout);
+        },
         error(e) {
             console.log("error app", e);
             this.error_m = e;
@@ -83,15 +106,32 @@ export default {
             console.log("out");
             localStorage.removeItem("token");
             localStorage.removeItem("admin");
+            localStorage.removeItem("name");
+            localStorage.removeItem("time_token");
             this.token = null;
             this.admin = false;
             this.$router.replace({ name: "login" });
         },
         login(data) {
             this.token = data.token;
+            this.name = data.name;
             this.admin = data.admin;
+            //console.log("tipo de admin", typeof this.admin);
             localStorage.setItem("token", this.token);
             localStorage.setItem("admin", this.admin);
+            localStorage.setItem("name", this.name);
+            localStorage.setItem("time_token", new Dayjs());
+        },
+        LogoutTime() {
+            dayjs.extend(isSameOrBefore);
+            let init = Dayjs(localStorage.getItem("time_token"));
+            let now = init;
+            now.extend(isSameOrBefore);
+
+            now.add("15", "minute");
+            if (now.isSameOrBefore(init)) {
+                this.logout();
+            }
         },
         checkedUser() {
             // return true;

@@ -29,6 +29,7 @@ import Tabla from "@/pages/components/Tabla.vue";
 import axios from "axios";
 import dayjs from "dayjs";
 import CrearCarpeta from "@/pages/Carpetas/CrearCarpeta.vue";
+import { EventBus } from "@/event-bus";
 
 export default {
     name: "index-carpetas",
@@ -52,12 +53,17 @@ export default {
         };
     },
     mounted() {
+        this.actualizarLista();
         //console.log();
         this.token = localStorage.getItem("token");
         console.log("token", this.token);
         this.ConsultarCarpetas();
     },
     methods: {
+        actualizarLista() {
+            console.log("refresca");
+            EventBus.$on("refresh_folder", this.logout);
+        },
         error(e) {
             console.log("in_car", e);
             this.$emit("error", e);
@@ -83,8 +89,12 @@ export default {
                 })
                 .catch((error) => {
                     let e = error.response.data;
+                    let status = error.response.status;
                     let desautenticado = false;
                     if (e.message == "Desautorizado") {
+                        this.$emit("desautenticado");
+                    }
+                    if (status == 401) {
                         this.$emit("desautenticado");
                     }
                     console.log("error", error.response.data);

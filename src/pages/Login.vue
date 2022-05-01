@@ -27,6 +27,11 @@
                             type="password"
                             placeholder="Contraseña"
                             v-model="formulario.password"
+                            @keypress="
+                                if ($event.keyCode == 13) {
+                                    login();
+                                }
+                            "
                         >
                         </fg-input>
                         <alert type="danger" v-show="validacion.login">
